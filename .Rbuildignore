@@ -1,0 +1,8 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+
+^LICENSE$
+^LICENSES_THIRD_PARTY$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

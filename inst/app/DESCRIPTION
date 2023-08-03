@@ -1,0 +1,15 @@
+Package: gMCPShiny
+Title: gMCP Shiny App
+Type: Shiny
+Version: 2023.5.0
+Imports:
+    brew,
+    bslib,
+    gMCPLite,
+    gsDesign,
+    markdown,
+    ragg,
+    shiny,
+    shinyjs,
+    shinyMatrix,
+    stringi

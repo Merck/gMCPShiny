@@ -1,0 +1,36 @@
+gMCPShiny uses third-party R packages which may be distributed under different
+licenses. We have listed all of these third party packages and their licenses
+below. However, the most up-to-date information can be found via inspecting
+the Imports field in the DESCRIPTION file.
+
+You must agree to the terms of these licenses, in addition to the gMCPShiny
+source code license, in order to use this software.
+
+--------------------------------------------------
+Third party R packages listed by License type
+[Format: Name - URL]
+--------------------------------------------------
+
+BSD-3-Clause
+  * stringi - https://cran.r-project.org/web/packages/stringi/LICENSE
+
+MIT / X11 License (or adaptations) (https://www.opensource.org/licenses/MIT)
+  * bslib - https://rstudio.github.io/bslib/LICENSE-text.html
+  * jsonlite - https://cran.r-project.org/web/packages/jsonlite/LICENSE
+  * markdown - https://cran.r-project.org/web/packages/markdown/LICENSE
+  * ragg - https://ragg.r-lib.org/LICENSE-text.html
+  * rlang - https://rlang.r-lib.org/LICENSE-text.html
+  * shinyjs - https://cran.r-project.org/web/packages/shinyjs/LICENSE
+  * shinyMatrix - https://cran.r-project.org/web/packages/shinyMatrix/LICENSE
+
+GPL-2
+  * brew - https://cran.r-project.org/package=brew
+
+GPL-3
+  * gMCPLite - https://cran.r-project.org/package=gMCPLite
+  * gsDesign - https://cran.r-project.org/package=gsDesign
+  * shiny - https://cran.r-project.org/web/packages/shiny/LICENSE
+
+GPL-2 | GPL-3
+  * htmltools - https://cran.r-project.org/package=htmltools
+  * methods - https://www.r-project.org/Licenses/

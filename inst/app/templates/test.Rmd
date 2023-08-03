@@ -1,0 +1,400 @@
+---
+title: Graphical Testing 
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(gsDesign)
+library(gMCPLite)
+library(dplyr)
+library(kableExtra)
+```
+
+## Multiplicity diagram for hypothesis testing
+
+```{r}
+nameHypotheses <- c("H1", "H2", "H3", "H4")
+alphaHypotheses <- c(0.00625, 0.00625, 0.00625, 0.00625)
+FWER <- sum(alphaHypotheses)
+GroupHypotheses <- c("A", "B", "C", "D")
+n_hypo <- 4
+m <- matrix(c(0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0), nrow = n_hypo)
+
+h <- hGraph(
+  nHypotheses     = n_hypo,
+  nameHypotheses  = nameHypotheses,
+  alphaHypotheses = alphaHypotheses ,
+  m               = m,
+  fill            = factor(GroupHypotheses, levels = unique(GroupHypotheses)),
+  palette         = c("#4D4D4D99", "#96969699", "#C3C3C399", "#E6E6E699"),
+  labels          = unique(GroupHypotheses),
+  legend.name     = "Group Name",
+  legend.position = "bottom",
+  halfWid         = 0.75,
+  halfHgt         = 0.5,
+  trhw            = 0.13,
+  trhh            = 0.1,
+  trprop          = 0.33,
+  digits          = 5,
+  trdigits        = 4,
+  size            = 8,
+  boxtextsize     = 6,
+  legend.textsize = 20,
+  arrowsize       = 0.035,
+  offset          = 0.15,
+  x               = NULL,
+  y               = NULL,
+  wchar           = "\u03b1"
+)
+
+plot(h)
+```
+
+## Original design for each hypothesis{.tabset}
+
+```{r, results='asis'}
+endpoint<-c("gsd", "fix", "fix", "fix")
+k <- list(3, NULL, NULL, NULL)
+test.type <- list(4, NULL, NULL, NULL)
+alpha <- list(0.00625, NULL, NULL, NULL)
+beta <- list(0.1, NULL, NULL, NULL)
+astar <- list(0, NULL, NULL, NULL)
+timing <- list(c(0.333333333333333, 0.666666666666667, 1), NULL, NULL, NULL)
+sfu <- list(function (alpha, t, param = NULL) 
+{
+    checkScalar(alpha, "numeric", c(0, Inf), c(FALSE, FALSE))
+    checkVector(t, "numeric", c(0, Inf), c(TRUE, FALSE))
+    if (is.null(param) || param < 0.005 || param > 20) 
+        param <- 1
+    checkScalar(param, "numeric", c(0.005, 20), c(TRUE, TRUE))
+    t[t > 1] <- 1
+    if (param == 1) {
+        rho <- 1
+        txt <- "Lan-DeMets O'Brien-Fleming approximation"
+        parname <- "none"
+    }
+    else {
+        rho <- param
+        txt <- "Generalized Lan-DeMets O'Brien-Fleming"
+        parname <- "rho"
+    }
+    z <- -qnorm(alpha/2)
+    x <- list(name = txt, param = param, parname = parname, sf = sfLDOF, spend = 2 * (1 - pnorm(z/t^(rho/2))), bound = NULL, prob = NULL)
+    class(x) <- "spendfn"
+    x
+}, NULL, NULL, NULL)
+sfupar <- list(1, NULL, NULL, NULL)
+sfl <- list(function (alpha, t, param = NULL) 
+{
+    checkScalar(alpha, "numeric", c(0, Inf), c(FALSE, FALSE))
+    checkVector(t, "numeric", c(0, Inf), c(TRUE, FALSE))
+    if (is.null(param) || param < 0.005 || param > 20) 
+        param <- 1
+    checkScalar(param, "numeric", c(0.005, 20), c(TRUE, TRUE))
+    t[t > 1] <- 1
+    if (param == 1) {
+        rho <- 1
+        txt <- "Lan-DeMets O'Brien-Fleming approximation"
+        parname <- "none"
+    }
+    else {
+        rho <- param
+        txt <- "Generalized Lan-DeMets O'Brien-Fleming"
+        parname <- "rho"
+    }
+    z <- -qnorm(alpha/2)
+    x <- list(name = txt, param = param, parname = parname, sf = sfLDOF, spend = 2 * (1 - pnorm(z/t^(rho/2))), bound = NULL, prob = NULL)
+    class(x) <- "spendfn"
+    x
+}, NULL, NULL, NULL)
+sflpar <- list(1, NULL, NULL, NULL)
+lambdaC <- list(0.115524530093324, NULL, NULL, NULL)
+hr <- list(0.6, NULL, NULL, NULL)
+hr0 <- list(1, NULL, NULL, NULL)
+etaC <- list(0.01, NULL, NULL, NULL)
+etaE <- list(0.01, NULL, NULL, NULL)
+gamma <- list(c(10.9538819917591, 21.9077639835181, 32.8616459752772, 43.8155279670363), NULL, NULL, NULL)
+R <- list(c(2, 2, 2, 6), NULL, NULL, NULL)
+S <- list(NULL, NULL, NULL, NULL)
+T <- list(18, NULL, NULL, NULL)
+minfup <- list(6, NULL, NULL, NULL)
+ratio <- list(1, NULL, NULL, NULL)
+
+gsDlist<-list()
+gsDlist <- sapply(1:n_hypo, function(i) if (endpoint[i]=='fix'){NULL}else {
+  gsDesign::gsSurv(
+        k = k[[i]],
+        test.type = test.type[[i]],
+        alpha = alpha[[i]],
+        beta = beta[[i]],
+        astar = astar[[i]],
+        timing = timing[[i]],
+        sfu = sfu[[i]],
+        sfupar = sfupar[[i]],
+        sfl = sfl[[i]],
+        sflpar = sflpar[[i]],
+        lambdaC = lambdaC[[i]],
+        hr = hr[[i]],
+        hr0 = hr0[[i]],
+        eta = etaC[[i]],
+        etaE = etaE[[i]],
+        gamma = gamma[[i]],
+        R = R[[i]],
+        S = S[[i]],
+        T = T[[i]],
+        minfup = minfup[[i]],
+        ratio = ratio[[i]])
+})
+for (i in 1:n_hypo) {
+  cat("###", paste(nameHypotheses[i], " \n"))
+  d <- gsDlist[[i]]
+  # If not group sequential for this hypothesis, print the max alpha allocated
+  # and the nominal p-value
+  if (is.null(d)) {
+    cat(paste0(nameHypotheses[i], " is fixed sample size design."))
+    cat("\n\n")
+  }
+  # For group sequential tests, print max alpha allocated and
+  # corresponding group sequential bounds
+  if (!is.null(gsDlist[[i]])) {
+    tab <- gsDesign::gsBoundSummary(gsDlist[[i]])
+    rownames(tab) <- 1:nrow(tab)
+    kable(tab, caption = paste0("Design for ", nameHypotheses[i]), row.names = FALSE) %>% kable_styling() %>% cat()
+    cat("\n\n")
+    }
+}
+```
+
+## Result entries at the timing of analysis
+
+```{r}
+Name<-c("H1","H1", "H2", "H3", "H4")
+Group<-c("A","A", "B", "C", "D")
+ObsPval<-c(0.0006, 0.0000006, 1, 1, 1)
+ObsEvnts<-c(80, 110, NA, NA, NA)
+Analysis<-c(1, 2, NA, NA, NA)
+
+n.Iplan<- c(76.0612208229476, 152.122441645895, NA, NA, NA)
+n.Imax <- c(228.183662468843, 228.183662468843, NA, NA, NA)
+
+spending_method <- c("info","info", "fix", "fix", "fix")
+
+spendingTime<-ifelse(spending_method=='fix',NA,ifelse(spending_method=='info',ObsEvnts/n.Imax,pmin(ObsEvnts,n.Iplan)/n.Imax))
+inputResults<-data.frame(Name,Group,Analysis,n.Iplan,ObsEvnts,ObsPval,spendingTime)
+kable(inputResults, caption = "Results for Interim Analysis.") %>%
+  kable_styling()
+```
+
+## Testing hypotheses
+### Compute sequential p-values for each hypothesis
+```{r}
+EOCtab <- inputResults %>%
+  group_by(Name) %>%
+  slice(1) %>%
+  ungroup() %>%
+  select("Name","Group","ObsPval")
+EOCtab$seqp <- .9999
+for (i in 1:n_hypo) {
+  EOCtab$seqp[i] <-
+    ifelse(is.null(gsDlist[[i]]), EOCtab$ObsPval[i], {
+      tem <- filter(inputResults, Name == unique(inputResults$Name)[i])
+      sequentialPValue(
+        gsD = gsDlist[[i]], interval = c(.0001, .9999),
+        n.I = tem$ObsEvnts,
+        Z = -qnorm(tem$ObsPval),
+        usTime = tem$spendingTime
+      )
+    })
+}
+EOCtab <- EOCtab %>% select(-"ObsPval")
+```
+
+### Evaluate hypothesis rejection using gMCPLite
+```{r,message=FALSE,warning=FALSE}
+# Make a graph object
+graph <- matrix2graph(m)
+# Add weights to the object based on alpha allocation
+graph <- gMCPLite::setWeights(gMCPLite::matrix2graph(m), alphaHypotheses / FWER)
+result <- gMCP(graph = graph, pvalues = EOCtab$seqp, alpha = FWER)
+# now map back into EOCtable
+EOCtab$Rejected <- result@rejected
+EOCtab$adjPValues <- result@adjPValues
+```
+
+## Verification of hypotheses rejected
+
+```{r}
+# Number of graphs is used repeatedly
+ngraphs <- length(result@graphs)
+# Set up tibble with hypotheses rejected at each stage
+rejected <- NULL
+for (i in 1:length(result@graphs)) {
+  rejected <- rbind(
+    rejected,
+    tibble(
+      Name = 1:n_hypo, Stage = i,
+      Rejected = as.logical(result@graphs[[i]]@nodeAttr$rejected)
+    )
+  )
+}
+rejected <- rejected %>%
+  filter(Rejected) %>%
+  group_by(Name) %>%
+  summarize(graphRejecting = min(Stage) - 1, .groups = "drop") %>% # Last graph with weight>0 where H rejected
+  arrange(graphRejecting)
+# Get final weights
+# for hypotheses not rejected, this will be final weight where
+# no hypothesis could be rejected
+lastWeights <- as.numeric(result@graphs[[ngraphs]]@weights)
+lastGraph <- rep(ngraphs, nrow(EOCtab))
+# We will update for rejected hypotheses with last positive weight for each
+if (ngraphs > 1) {
+  for (i in 1:(ngraphs - 1)) {
+    lastWeights[rejected$Name[i]] <- as.numeric(result@graphs[[i]]@weights[rejected$Name[i]])
+    lastGraph[rejected$Name[i]] <- i
+  }
+}
+EOCtab$lastAlpha <- FWER * lastWeights
+EOCtab$lastGraph <- lastGraph
+EOCtabx <- EOCtab
+names(EOCtabx) <- c(
+  "Name", "Group", "Sequential p",
+  "Rejected", "Adjusted p", "Max alpha allocated", "Last Graph"
+)
+# Display table with desired column order
+# Delayed following until after multiplicity graph sequence
+# EOCtabx %>% select(c(1:4,7,5:6,8)) %>% kable() %>% kable_styling()
+```
+
+### Multiplicity graph sequence from gMCPLite {.tabset}
+
+```{r,message=FALSE,warning=FALSE,results='asis'}
+for (i in 1:ngraphs) {
+  mx <- result@graphs[[i]]@m
+  rownames(mx) <- NULL
+  colnames(mx) <- NULL
+  g <- gMCPLite::hGraph(
+    nHypotheses = n_hypo,
+    alphaHypotheses = result@graphs[[i]]@weights * FWER,
+    m = mx,
+    nameHypotheses = nameHypotheses,
+    palette         = c("#4D4D4D99", "#96969699", "#C3C3C399", "#E6E6E699"),
+    labels          = unique(GroupHypotheses),
+    legend.name     = "Group Name",
+    legend.position = "bottom",
+    halfWid         = 0.75,
+    halfHgt         = 0.5,
+    trhw            = 0.13,
+    trhh            = 0.1,
+    trprop          = 0.33,
+    digits          = 5,
+    trdigits        = 4,
+    size            = 8,
+    boxtextsize     = 6,
+    legend.textsize = 20,
+    arrowsize       = 0.035,
+    offset          = 0.15,
+    x               = NULL,
+    y               = NULL,
+    wchar           = "\u03b1"
+) 
+  cat(" \n")
+  cat("####", paste(" Graph", as.character(i), " \n\n"))
+  print(g)
+  cat(" \n\n\n")
+}
+```
+
+### Comparison of sequential p-values to multiplicity graphs
+
+We can compare sequential p-values to available $\alpha$ in each graph.
+In the column 'Last Graph' we can see one of 2 things:
+
+1) For rejected hypotheses, the maximum $\alpha$ allocated to the hypothesis. 
+2) The maximum $\alpha$ allocated to the non-rejected hypotheses; since each sequential p-value is greater than the allocated $\alpha$ for the corresponding hypothesis, none of these hypotheses were rejected.
+
+```{r}
+EOCtabx %>%
+  select(c(1:3, 6, 4:5, 7)) %>%
+  kable() %>%
+  kable_styling()
+```
+
+### Bounds at final $\alpha$ allocated for group sequential tests {.tabset}
+
+As a separate validation, we examine group sequential bounds for each hypothesis updated with 1) the maximum $\alpha$ allocated above, 2) the number of events at each analysis, and 3) the cumulative spending at each analysis above. The nominal p-value for at least one of the analyses performed for each rejected hypotheses should be less than or equal to the nominal p-value in the group sequential design.
+For each hypothesis not rejected, all nominal p-values are greater than the its corresponding bound.
+For hypotheses tested without a group sequential design, the nominal p-value for the test of that hypothesis can be compared to the maximum alpha allocated in the above table.
+
+```{r,results='asis'}
+for (i in 1:n_hypo) {
+  cat("####", paste(nameHypotheses[i], " \n"))
+  hresults <- inputResults %>% filter(Name == unique(inputResults$Name)[i])
+  xx <- paste("Max alpha allocated from above table: ",
+    as.character(EOCtab$lastAlpha[i]),
+    sep = ""
+  )
+  d <- gsDlist[[i]]
+  # If not group sequential for this hypothesis, print the max alpha allocated
+  # and the nominal p-value
+  if (is.null(d)) {
+    cat("Maximum alpha allocated: ")
+    cat(EOCtab$lastAlpha[i])
+    cat("\n\n")
+    cat("Nominal p-value for hypothesis test: ")
+    cat(hresults$ObsPval)
+    cat("\n\n")
+  }
+  # For group sequential tests, print max alpha allocated and
+  # corresponding group sequential bounds
+  if (!is.null(gsDlist[[i]])) {
+    cat("Nominal p-values at each analysis for comparison to bounds in table below:\n\n")
+    cat(hresults$ObsPval)
+    cat("\n\n")
+    # Get other info for current hypothesis
+    events<-hresults$ObsEvnts
+    length(events)<-d$k
+    length(spendingTime)<-d$k
+    n.I <- ifelse(is.na(events),d$n.I,events)
+    usTime <- ifelse(is.na(spendingTime),d$timing,spendingTime)
+    n.Imax <- max(d$n.I)
+    # If no alpha allocated, just print text line to note this along with the 0 alpha allocated
+    if (EOCtab$lastAlpha[i] == 0) {
+      cat("Maximum alpha allocated: 0\n\n")
+      cat("No testing required\n\n")
+    }
+    if (EOCtab$lastAlpha[i] > 0) {
+      dupdate <- gsDesign::gsDesign(
+        alpha = EOCtab$lastAlpha[i],
+        k = d$k,
+        n.I = n.I,
+        usTime = usTime,
+        maxn.IPlan = n.Imax,
+        n.fix = d$n.fix,
+        test.type = 1,
+        sfu = d$upper$sf,
+        sfupar = d$upper$param
+      )
+      tabl <- gsDesign::gsBoundSummary(dupdate,
+        Nname = "Events",
+        exclude = c(
+          "B-value", "CP", "CP H1", "Spending",
+          "~delta at bound", "P(Cross) if delta=0",
+          "PP", "P(Cross) if delta=1"
+        )
+      )
+      kable(tabl, caption = xx, row.names = FALSE) %>%
+        kable_styling() %>%
+        cat()
+      cat("\n\n")
+    }
+  }
+}
+```
+
+## Environment information
+
+-   Run date: `r Sys.time()`
+-   R version: `r R.version.string`

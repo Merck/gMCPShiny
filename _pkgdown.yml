@@ -1,0 +1,54 @@
+destination: docs
+
+url: https://merck.github.io/gMCPShiny/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#00857c"
+    navbar-light-brand-color: "#fff"
+    navbar-light-brand-hover-color: "#fff"
+    navbar-light-color: "#fff"
+    navbar-light-hover-color: "#fff"
+    navbar-light-active-color: "#fff"
+    dropdown-link-hover-color: "#fff"
+    dropdown-link-hover-bg: "#00857c"
+
+footer:
+  structure:
+    left: [developed_by, built_with, legal]
+    right: [blank]
+  components:
+    legal: "<br>Copyright &copy; 2023 Merck & Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved."
+    blank: "<span></span>"
+
+reference:
+  - title: Application
+    contents:
+      - run_app
+
+  - title: Graph operations
+    contents:
+      - df2graph
+      - hgraph_palette
+
+  - title: Shiny UI components
+    contents:
+      - navbarFluidPage
+      - headerCard
+      - rcodeOutput
+      - renderRcode
+      - rmdOutput
+      - renderRmd
+      - matrixButtonGroup
+      - addMatrixRow
+      - delMatrixRow
+      - textInputAddonRight
+      - fileButtonInput
+      - helpLink
+      - helpPopover
+
+  - title: Input/output utilities
+    contents:
+      - arithmetic_to_numeric
+      - sanitize_filename

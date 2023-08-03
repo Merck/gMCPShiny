@@ -1,0 +1,357 @@
+---
+title: Graphical Testing 
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(gsDesign)
+library(gMCPLite)
+library(dplyr)
+library(kableExtra)
+```
+
+## Multiplicity diagram for hypothesis testing
+
+```{r}
+nameHypotheses <- c(<%=paste0("\"", paste0(input$hypothesesMatrix[,"Name"], collapse = "\", \""), "\"")%>)
+alphaHypotheses <- c(<%=paste0(sapply(input$hypothesesMatrix[,"Alpha"], arithmetic_to_numeric), collapse = ", ")%>)
+FWER <- sum(alphaHypotheses)
+GroupHypotheses <- c(<%=paste0("\"", paste0(unique(input$hypothesesMatrix[,"Group"]), collapse = "\", \""), "\"")%>)
+n_hypo <- <%=nrow(input$hypothesesMatrix)%>
+m <- matrix(c(<%=paste0(c(df2graph(namesH = input$hypothesesMatrix[,1], df = data.frame(input$trwtMatrix)[(data.frame(input$trwtMatrix)[,1] %in% input$hypothesesMatrix[,1]) & (data.frame(input$trwtMatrix)[,2] %in% input$hypothesesMatrix[,1]),])), collapse = ", ")%>), nrow = n_hypo)
+
+h <- hGraph(
+  nHypotheses     = n_hypo,
+  nameHypotheses  = nameHypotheses,
+  alphaHypotheses = alphaHypotheses ,
+  m               = m,
+  fill            = factor(GroupHypotheses, levels = unique(GroupHypotheses)),
+  palette         = c(<%=paste0("\"", paste0(hgraph_palette(pal_name = rv_nodes$pal_name, n = length(unique(input$hypothesesMatrix[,"Group"])), alpha = rv_nodes$pal_alpha), collapse = "\", \""), "\"")%>),
+  labels          = unique(GroupHypotheses),
+  legend.name     = <%=paste0("\"", input$legend.name, "\"")%>,
+  legend.position = <%=paste0("\"", input$legendPosition, "\"")%>,
+  halfWid         = <%=rv_nodes$width%>,
+  halfHgt         = <%=rv_nodes$height%>,
+  trhw            = <%=rv_edges$trhw%>,
+  trhh            = <%=rv_edges$trhh%>,
+  trprop          = <%=rv_edges$trprop%>,
+  digits          = <%=rv_nodes$digits%>,
+  trdigits        = <%=rv_edges$trdigits%>,
+  size            = <%=rv_nodes$size%>,
+  boxtextsize     = <%=rv_edges$boxtextsize%>,
+  legend.textsize = <%=input$legend.textsize%>,
+  arrowsize       = <%=rv_edges$arrowsize%>,
+  offset          = <%=rv_edges$offset%>,
+  x               = <%=if(is.null(input$nodeposMatrix[,"x"]) | !setequal(input$nodeposMatrix[,"Hypothesis"], input$hypothesesMatrix[,"Name"])){"NULL"} else{paste0("c(", paste0(as.numeric(input$nodeposMatrix[,"x"]), collapse = ", "), ")")}%>,
+  y               = <%=if(is.null(input$nodeposMatrix[,"y"]) | !setequal(input$nodeposMatrix[,"Hypothesis"], input$hypothesesMatrix[,"Name"])){"NULL"} else{paste0("c(", paste0(as.numeric(input$nodeposMatrix[,"y"]), collapse = ", "), ")")}%>,
+  wchar           = <%=paste0("\"", rv_nodes$wchar, "\"")%>
+)<%= if (input$plotTitle != "") { paste0(" +\n  labs(title = \"", input$plotTitle, "\") +", "\n  theme(plot.title = element_text(size = ", input$title.textsize, ", hjust = ", input$title.position, "))") } %><%= if (input$plotCaption != "") " +" -%>
+<%= if (input$plotCaption != "") { paste0("\n  labs(caption = \"", input$plotCaption, "\") +", "\n  theme(plot.caption = element_text(size = ", input$caption.textsize, ", hjust = ", input$caption.position, "))") } %>
+
+plot(h)
+```
+
+## Original design for each hypothesis{.tabset}
+
+```{r, results='asis'}
+endpoint<-c(<%=paste0("\"",paste0(sapply(1:nrow(input$hypothesesMatrix),function(i){ifelse(input[[paste0("design_type_",i)]]=='fix','fix','gsd')}),collapse="\", \""), "\"")%>)
+k <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$k}),collapse=", ")%>)
+test.type <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$test.type}),collapse=", ")%>)
+alpha <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$alpha}),collapse=", ")%>)
+beta <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$beta}),collapse=", ")%>)
+astar <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$astar}),collapse=", ")%>)
+timing <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$timing}),collapse=", ")%>)
+sfu <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$upper$sf}),collapse=", ")%>)
+sfupar <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$upper$param}),collapse=", ")%>)
+sfl <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$lower$sf}),collapse=", ")%>)
+sflpar <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$lower$param}),collapse=", ")%>)
+lambdaC <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$lambdaC}),collapse=", ")%>)
+hr <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$hr}),collapse=", ")%>)
+hr0 <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$hr0}),collapse=", ")%>)
+etaC <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$etaC}),collapse=", ")%>)
+etaE <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$etaE}),collapse=", ")%>)
+gamma <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$gamma}),collapse=", ")%>)
+R <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$R}),collapse=", ")%>)
+S <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$S}),collapse=", ")%>)
+T <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{max(GetDesign()[[i]]$T)}),collapse=", ")%>)
+minfup <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$minfup}),collapse=", ")%>)
+ratio <- list(<%=paste0(sapply(1:nrow(input$hypothesesMatrix),function(i) if (input[[paste0("design_type_",i)]]=='fix'){NULL}else{GetDesign()[[i]]$ratio}),collapse=", ")%>)
+
+gsDlist<-list()
+gsDlist <- sapply(1:n_hypo, function(i) if (endpoint[i]=='fix'){NULL}else {
+  gsDesign::gsSurv(
+        k = k[[i]],
+        test.type = test.type[[i]],
+        alpha = alpha[[i]],
+        beta = beta[[i]],
+        astar = astar[[i]],
+        timing = timing[[i]],
+        sfu = sfu[[i]],
+        sfupar = sfupar[[i]],
+        sfl = sfl[[i]],
+        sflpar = sflpar[[i]],
+        lambdaC = lambdaC[[i]],
+        hr = hr[[i]],
+        hr0 = hr0[[i]],
+        eta = etaC[[i]],
+        etaE = etaE[[i]],
+        gamma = gamma[[i]],
+        R = R[[i]],
+        S = S[[i]],
+        T = T[[i]],
+        minfup = minfup[[i]],
+        ratio = ratio[[i]])
+})
+for (i in 1:n_hypo) {
+  cat("###", paste(nameHypotheses[i], " \n"))
+  d <- gsDlist[[i]]
+  # If not group sequential for this hypothesis, print the max alpha allocated
+  # and the nominal p-value
+  if (is.null(d)) {
+    cat(paste0(nameHypotheses[i], " is fixed sample size design."))
+    cat("\n\n")
+  }
+  # For group sequential tests, print max alpha allocated and
+  # corresponding group sequential bounds
+  if (!is.null(gsDlist[[i]])) {
+    tab <- gsDesign::gsBoundSummary(gsDlist[[i]])
+    rownames(tab) <- 1:nrow(tab)
+    kable(tab, caption = paste0("Design for ", nameHypotheses[i]), row.names = FALSE) %>% kable_styling() %>% cat()
+    cat("\n\n")
+    }
+}
+```
+
+## Result entries at the timing of analysis
+
+```{r}
+Name<-c(<%=paste0("\"",paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){input$hypothesesMatrix[i,'Name']}else{rep(input$hypothesesMatrix[i,'Name'],nrow(input[[paste0("pvalMatrix_",i)]]))}),paste,collapse='\","'),collapse = "\", \""), "\"")%>)
+Group<-c(<%=paste0("\"",paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){input$hypothesesMatrix[i,'Group']}else{rep(input$hypothesesMatrix[i,'Group'],nrow(input[[paste0("pvalMatrix_",i)]]))}),paste,collapse='\","'),collapse = "\", \""), "\"")%>)
+ObsPval<-c(<%=paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){input[[paste0("pval_", i)]]}else{as.numeric(input[[paste0("pvalMatrix_", i)]][,3])}),paste,collapse=", "),collapse=", ")%>)
+ObsEvnts<-c(<%=paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){NA}else{as.numeric(input[[paste0("pvalMatrix_", i)]][,2])}),paste,collapse=", "),collapse=", ")%>)
+Analysis<-c(<%=paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){NA}else{as.numeric(input[[paste0("pvalMatrix_", i)]][,1])}),paste,collapse=", "),collapse=", ")%>)
+
+n.Iplan<- c(<%=paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){NA}else{GetDesign()[[i]]$n.I[1:nrow(input[[paste0("pvalMatrix_",i)]])]}),paste,collapse=", "),collapse=", ")%>)
+n.Imax <- c(<%=paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){NA}else{rep(max(GetDesign()[[i]]$n.I),nrow(input[[paste0("pvalMatrix_",i)]]))}),paste,collapse=", "),collapse=", ")%>)
+
+spending_method <- c(<%=paste0("\"",paste0(sapply(sapply(seq(nrow(input$hypothesesMatrix)),function(i) if (input[[paste0("design_type_", i)]]=='fix'){"fix"}else{rep(input[[paste0("spending_interim_", i)]],nrow(input[[paste0("pvalMatrix_",i)]]))}),paste,collapse='\","'),collapse = "\", \""), "\"")%>)
+
+spendingTime<-ifelse(spending_method=='fix',NA,ifelse(spending_method=='info',ObsEvnts/n.Imax,pmin(ObsEvnts,n.Iplan)/n.Imax))
+inputResults<-data.frame(Name,Group,Analysis,n.Iplan,ObsEvnts,ObsPval,spendingTime)
+kable(inputResults, caption = "Results for Interim Analysis.") %>%
+  kable_styling()
+```
+
+## Testing hypotheses
+### Compute sequential p-values for each hypothesis
+```{r}
+EOCtab <- inputResults %>%
+  group_by(Name) %>%
+  slice(1) %>%
+  ungroup() %>%
+  select("Name","Group","ObsPval")
+EOCtab$seqp <- .9999
+for (i in 1:n_hypo) {
+  EOCtab$seqp[i] <-
+    ifelse(is.null(gsDlist[[i]]), EOCtab$ObsPval[i], {
+      tem <- filter(inputResults, Name == unique(inputResults$Name)[i])
+      sequentialPValue(
+        gsD = gsDlist[[i]], interval = c(.0001, .9999),
+        n.I = tem$ObsEvnts,
+        Z = -qnorm(tem$ObsPval),
+        usTime = tem$spendingTime
+      )
+    })
+}
+EOCtab <- EOCtab %>% select(-"ObsPval")
+```
+
+### Evaluate hypothesis rejection using gMCPLite
+```{r,message=FALSE,warning=FALSE}
+# Make a graph object
+graph <- matrix2graph(m)
+# Add weights to the object based on alpha allocation
+graph <- gMCPLite::setWeights(gMCPLite::matrix2graph(m), alphaHypotheses / FWER)
+result <- gMCP(graph = graph, pvalues = EOCtab$seqp, alpha = FWER)
+# now map back into EOCtable
+EOCtab$Rejected <- result@rejected
+EOCtab$adjPValues <- result@adjPValues
+```
+
+## Verification of hypotheses rejected
+
+```{r}
+# Number of graphs is used repeatedly
+ngraphs <- length(result@graphs)
+# Set up tibble with hypotheses rejected at each stage
+rejected <- NULL
+for (i in 1:length(result@graphs)) {
+  rejected <- rbind(
+    rejected,
+    tibble(
+      Name = 1:n_hypo, Stage = i,
+      Rejected = as.logical(result@graphs[[i]]@nodeAttr$rejected)
+    )
+  )
+}
+rejected <- rejected %>%
+  filter(Rejected) %>%
+  group_by(Name) %>%
+  summarize(graphRejecting = min(Stage) - 1, .groups = "drop") %>% # Last graph with weight>0 where H rejected
+  arrange(graphRejecting)
+# Get final weights
+# for hypotheses not rejected, this will be final weight where
+# no hypothesis could be rejected
+lastWeights <- as.numeric(result@graphs[[ngraphs]]@weights)
+lastGraph <- rep(ngraphs, nrow(EOCtab))
+# We will update for rejected hypotheses with last positive weight for each
+if (ngraphs > 1) {
+  for (i in 1:(ngraphs - 1)) {
+    lastWeights[rejected$Name[i]] <- as.numeric(result@graphs[[i]]@weights[rejected$Name[i]])
+    lastGraph[rejected$Name[i]] <- i
+  }
+}
+EOCtab$lastAlpha <- FWER * lastWeights
+EOCtab$lastGraph <- lastGraph
+EOCtabx <- EOCtab
+names(EOCtabx) <- c(
+  "Name", "Group", "Sequential p",
+  "Rejected", "Adjusted p", "Max alpha allocated", "Last Graph"
+)
+# Display table with desired column order
+# Delayed following until after multiplicity graph sequence
+# EOCtabx %>% select(c(1:4,7,5:6,8)) %>% kable() %>% kable_styling()
+```
+
+### Multiplicity graph sequence from gMCPLite {.tabset}
+
+```{r,message=FALSE,warning=FALSE,results='asis'}
+for (i in 1:ngraphs) {
+  mx <- result@graphs[[i]]@m
+  rownames(mx) <- NULL
+  colnames(mx) <- NULL
+  g <- gMCPLite::hGraph(
+    nHypotheses = n_hypo,
+    alphaHypotheses = result@graphs[[i]]@weights * FWER,
+    m = mx,
+    nameHypotheses = nameHypotheses,
+    palette         = c(<%=paste0("\"", paste0(hgraph_palette(pal_name = rv_nodes$pal_name, n = length(unique(input$hypothesesMatrix[,"Group"])), alpha = rv_nodes$pal_alpha), collapse = "\", \""), "\"")%>),
+    labels          = unique(GroupHypotheses),
+    legend.name     = <%=paste0("\"", input$legend.name, "\"")%>,
+    legend.position = <%=paste0("\"", input$legendPosition, "\"")%>,
+    halfWid         = <%=rv_nodes$width%>,
+    halfHgt         = <%=rv_nodes$height%>,
+    trhw            = <%=rv_edges$trhw%>,
+    trhh            = <%=rv_edges$trhh%>,
+    trprop          = <%=rv_edges$trprop%>,
+    digits          = <%=rv_nodes$digits%>,
+    trdigits        = <%=rv_edges$trdigits%>,
+    size            = <%=rv_nodes$size%>,
+    boxtextsize     = <%=rv_edges$boxtextsize%>,
+    legend.textsize = <%=input$legend.textsize%>,
+    arrowsize       = <%=rv_edges$arrowsize%>,
+    offset          = <%=rv_edges$offset%>,
+    x               = <%=if(is.null(input$nodeposMatrix[,"x"]) | !setequal(input$nodeposMatrix[,"Hypothesis"], input$hypothesesMatrix[,"Name"])){"NULL"} else{paste0("c(", paste0(as.numeric(input$nodeposMatrix[,"x"]), collapse = ", "), ")")}%>,
+    y               = <%=if(is.null(input$nodeposMatrix[,"y"]) | !setequal(input$nodeposMatrix[,"Hypothesis"], input$hypothesesMatrix[,"Name"])){"NULL"} else{paste0("c(", paste0(as.numeric(input$nodeposMatrix[,"y"]), collapse = ", "), ")")}%>,
+    wchar           = <%=paste0("\"", rv_nodes$wchar, "\"")%>
+) 
+  cat(" \n")
+  cat("####", paste(" Graph", as.character(i), " \n\n"))
+  print(g)
+  cat(" \n\n\n")
+}
+```
+
+### Comparison of sequential p-values to multiplicity graphs
+
+We can compare sequential p-values to available $\alpha$ in each graph.
+In the column 'Last Graph' we can see one of 2 things:
+
+1) For rejected hypotheses, the maximum $\alpha$ allocated to the hypothesis. 
+2) The maximum $\alpha$ allocated to the non-rejected hypotheses; since each sequential p-value is greater than the allocated $\alpha$ for the corresponding hypothesis, none of these hypotheses were rejected.
+
+```{r}
+EOCtabx %>%
+  select(c(1:3, 6, 4:5, 7)) %>%
+  kable() %>%
+  kable_styling()
+```
+
+### Bounds at final $\alpha$ allocated for group sequential tests {.tabset}
+
+As a separate validation, we examine group sequential bounds for each hypothesis updated with 1) the maximum $\alpha$ allocated above, 2) the number of events at each analysis, and 3) the cumulative spending at each analysis above. The nominal p-value for at least one of the analyses performed for each rejected hypotheses should be less than or equal to the nominal p-value in the group sequential design.
+For each hypothesis not rejected, all nominal p-values are greater than the its corresponding bound.
+For hypotheses tested without a group sequential design, the nominal p-value for the test of that hypothesis can be compared to the maximum alpha allocated in the above table.
+
+```{r,results='asis'}
+for (i in 1:n_hypo) {
+  cat("####", paste(nameHypotheses[i], " \n"))
+  hresults <- inputResults %>% filter(Name == unique(inputResults$Name)[i])
+  xx <- paste("Max alpha allocated from above table: ",
+    as.character(EOCtab$lastAlpha[i]),
+    sep = ""
+  )
+  d <- gsDlist[[i]]
+  # If not group sequential for this hypothesis, print the max alpha allocated
+  # and the nominal p-value
+  if (is.null(d)) {
+    cat("Maximum alpha allocated: ")
+    cat(EOCtab$lastAlpha[i])
+    cat("\n\n")
+    cat("Nominal p-value for hypothesis test: ")
+    cat(hresults$ObsPval)
+    cat("\n\n")
+  }
+  # For group sequential tests, print max alpha allocated and
+  # corresponding group sequential bounds
+  if (!is.null(gsDlist[[i]])) {
+    cat("Nominal p-values at each analysis for comparison to bounds in table below:\n\n")
+    cat(hresults$ObsPval)
+    cat("\n\n")
+    # Get other info for current hypothesis
+    events<-hresults$ObsEvnts
+    length(events)<-d$k
+    length(spendingTime)<-d$k
+    n.I <- ifelse(is.na(events),d$n.I,events)
+    usTime <- ifelse(is.na(spendingTime),d$timing,spendingTime)
+    n.Imax <- max(d$n.I)
+    # If no alpha allocated, just print text line to note this along with the 0 alpha allocated
+    if (EOCtab$lastAlpha[i] == 0) {
+      cat("Maximum alpha allocated: 0\n\n")
+      cat("No testing required\n\n")
+    }
+    if (EOCtab$lastAlpha[i] > 0) {
+      dupdate <- gsDesign::gsDesign(
+        alpha = EOCtab$lastAlpha[i],
+        k = d$k,
+        n.I = n.I,
+        usTime = usTime,
+        maxn.IPlan = n.Imax,
+        n.fix = d$n.fix,
+        test.type = 1,
+        sfu = d$upper$sf,
+        sfupar = d$upper$param
+      )
+      tabl <- gsDesign::gsBoundSummary(dupdate,
+        Nname = "Events",
+        exclude = c(
+          "B-value", "CP", "CP H1", "Spending",
+          "~delta at bound", "P(Cross) if delta=0",
+          "PP", "P(Cross) if delta=1"
+        )
+      )
+      kable(tabl, caption = xx, row.names = FALSE) %>%
+        kable_styling() %>%
+        cat()
+      cat("\n\n")
+    }
+  }
+}
+```
+
+## Environment information
+
+-   Run date: `r Sys.time()`
+-   R version: `r R.version.string`

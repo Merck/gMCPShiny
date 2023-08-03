@@ -1,0 +1,62 @@
+/* navbar */
+
+.nav-custom-padding {
+    padding-left: 20px;
+    padding-right: 0;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-top: 30px;
+}
+
+/* card panel with heading */
+
+.card-title {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-body .shiny-input-container {
+    width: 100%;
+}
+
+.card,
+.card-header {
+    border-color: #dee2e6;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+}
+
+/* add padding to tab content */
+
+.tab-content {
+    padding-top: 1rem;
+}
+
+/* hr */
+hr {
+    color: #dee2e6;
+    opacity: 1;
+}
+
+/* popover icon */
+a.help-popover {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+a.help-popover:hover,
+a.help-popover:focus {
+    color: #565e64;
+}
+
+a[data-toggle='popover'] {
+    text-decoration: none;
+}
+
+/* popover style hotfix */
+/* https://github.com/rstudio/bslib/issues/375 */
+.popover-header {
+    margin-top: 0
+}
