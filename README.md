@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/Merck/gMCPShiny/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Merck/gMCPShiny?branch=main)
+[![shinyapps.io](https://img.shields.io/badge/Shiny-shinyapps.io-blue)](https://rinpharma.shinyapps.io/gmcp/)
 <!-- badges: end -->
 
 A Shiny app for graphical multiplicity control.
