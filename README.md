@@ -1,6 +1,8 @@
 # gMCPShiny <img src="man/figures/logo.png" align="right" width="120" />
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/Merck/gMCPShiny/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Merck/gMCPShiny?branch=main)
 <!-- badges: end -->
 
 A Shiny app for graphical multiplicity control.
