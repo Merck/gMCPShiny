@@ -40,11 +40,9 @@
 #'   tabPanel("Summary"),
 #'   tabPanel("Table")
 #' )
-
 # shiny and bslib versions:
 # https://github.com/rstudio/shiny/tree/9389160af06b2f26d3746fa06c6ac0df8e76c8dd
 # https://github.com/rstudio/bslib/tree/888fbe064491692deb56fd90dc23455052e31073
-
 navbarFluidPage <- function(
     title,
     ...,
