@@ -3,10 +3,10 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Merck/gMCPShiny/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/Merck/gMCPShiny/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Merck/gMCPShiny?branch=main)
-[![shinyapps.io](https://img.shields.io/badge/Shiny-shinyapps.io-blue)](https://rinpharma.shinyapps.io/gmcp/)
+[![shinyapps.io](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://rinpharma.shinyapps.io/gmcp/)
 <!-- badges: end -->
 
-A Shiny app for graphical multiplicity control.
+A Shiny app for graphical multiplicity control, the application interface allows users create a multiplicity graph with customized settings for hypothesis nodes, transition edges and labels, the iterative graphs can be automatically updated based on decisions of each hypothesis.
 
 ## Installation
 
@@ -19,15 +19,18 @@ install.packages("gMCPShiny")
 remotes::install_github("Merck/gMCPShiny")
 ```
 
-## Example
+## Execution
 
 To run the app locally:
 
 ```r
 gMCPShiny::run_app()
 ```
+![](inst/hgraph_demo.PNG)
 
-## Deployed instances
+User can create and customize the multiplicity graph design for protocol development using `Initial Graph Setup` tab, and explore how the graph components (hypothesis rejection, transition weights) are updated using `Iterative Graph Update` tab. 
+
+## Deployed Instances
 
 ### Production version
 
