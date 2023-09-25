@@ -28,7 +28,7 @@ License: GPL-3
 URL:
     https://merck.github.io/gMCPShiny/,
     https://github.com/Merck/gMCPShiny,
-    https://gmcp.shinyapps.io/prod/
+    https://rinpharma.shinyapps.io/gmcp/
 BugReports: https://github.com/Merck/gMCPShiny/issues
 Encoding: UTF-8
 VignetteBuilder: knitr
