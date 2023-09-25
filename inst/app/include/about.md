@@ -28,17 +28,17 @@ for multiple testing using graphical approach built with Shiny.
 
 Creator & Maintainer
 
-- Yalin Zhu, PhD \<yalin.zhu at merck.com\>
+- Yalin Zhu, PhD
 
 Project Manager
 
-- Keaven Anderson, PhD \<keaven_anderson at merck.com\>
+- Keaven Anderson, PhD
 
 Developers
 
-- Xuan Deng, PhD \<xuan.deng at merck.com\>
-- Yalin Zhu, PhD \<yalin.zhu at merck.com\>
-- Nan Xiao, PhD \<nan.xiao1 at merck.com\>
+- Xuan Deng, PhD
+- Yalin Zhu, PhD
+- Nan Xiao, PhD
 
 ### License
 

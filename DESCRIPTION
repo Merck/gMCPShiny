@@ -2,12 +2,12 @@ Package: gMCPShiny
 Title: Shiny App for Graphical Multiplicity
 Version: 2023.5.0
 Authors@R: c(
-    person("Yalin", "Zhu", email = "yalin.zhu@merck.com", role = c("aut", "cre"),
+    person("Yalin", "Zhu", email = "yalin.zhu@outlook.com", role = "aut",
            comment = c(ORCID = "0000-0003-3830-8660")),
     person("Xuan", "Deng", email = "xuan.deng@merck.com", role = "aut"),
     person("Keaven", "Anderson", email = "keaven_anderson@merck.com", role = "aut"),
     person("Yilong", "Zhang", email = "elong0527@gmail.com", role = "aut"),
-    person("Nan", "Xiao", email = "nan.xiao1@merck.com", role = "aut",
+    person("Nan", "Xiao", email = "nan.xiao1@merck.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0250-5673")),
     person("Ivan", "Sagalaev", role = c("ctb", "cph"), comment = "highlight.js library"),
     person("bslib contributors", role = c("ctb", "cph"), comment = "navbarPage implementation in bslib"),
@@ -28,7 +28,7 @@ License: GPL-3
 URL:
     https://merck.github.io/gMCPShiny/,
     https://github.com/Merck/gMCPShiny,
-    https://gmcp.shinyapps.io/prod/
+    https://rinpharma.shinyapps.io/gmcp/
 BugReports: https://github.com/Merck/gMCPShiny/issues
 Encoding: UTF-8
 VignetteBuilder: knitr
