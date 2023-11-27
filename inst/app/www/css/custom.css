@@ -60,3 +60,10 @@ a[data-toggle='popover'] {
 .popover-header {
     margin-top: 0
 }
+
+/* reset file button radius */
+/* https://github.com/rstudio/shiny/pull/3879 */
+.input-group>.input-group-prepend>.btn {
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
+}
