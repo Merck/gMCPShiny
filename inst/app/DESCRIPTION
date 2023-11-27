@@ -1,7 +1,7 @@
 Package: gMCPShiny
 Title: gMCP Shiny App
 Type: Shiny
-Version: 2023.5.0
+Version: 2023.11.0
 Imports:
     brew,
     bslib,
