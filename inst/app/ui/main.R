@@ -7,6 +7,7 @@ navbarFluidPage(
   lang = "en",
   theme = bslib::bs_theme(
     version = 5,
+    preset = "bootstrap",
     primary = "#00857c",
     "navbar-light-brand-color" = "#212529",
     "navbar-light-brand-hover-color" = "#212529",
