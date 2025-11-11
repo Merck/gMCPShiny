@@ -53,8 +53,8 @@ plotInput <- reactive({
       caption = stringi::stri_unescape_unicode(input$plotCaption)
     ) +
     ggplot2::theme(
-      plot.title = ggplot2::element_text(size = input$title.textsize, hjust = input$title.position),
-      plot.caption = ggplot2::element_text(size = input$caption.textsize, hjust = input$caption.position)
+      plot.title = ggplot2::element_text(size = input$title.textsize, hjust = as.numeric(input$title.position)),
+      plot.caption = ggplot2::element_text(size = input$caption.textsize, hjust = as.numeric(input$caption.position))
     )
 })
 
